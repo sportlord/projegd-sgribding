@@ -160,7 +160,7 @@ jobs:
 
 
     - name: Debug
-      run: dir
+      run: dir build
 
     - name: Pack
       working-directory: instdir
