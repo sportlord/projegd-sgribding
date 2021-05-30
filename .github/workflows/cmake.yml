@@ -65,13 +65,13 @@ jobs:
       - name: Get git tag
         id: get_tag
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-      - name: Download x86 artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: ProjegdSgribding_Win32.exe
-          path: ${{github.workspace}}/assets
-      - name: Fix filename
-        run: mv ${{github.workspace}}/assets/projegd-sgribding.exe ${{github.workspace}}/assets/ProjegdSgribding_Win32.exe
+#      - name: Download x86 artifact
+#        uses: actions/download-artifact@v1
+#        with:
+#          name: ProjegdSgribding_Win32.exe
+#          path: ${{github.workspace}}/assets
+#      - name: Fix filename
+#        run: mv ${{github.workspace}}/assets/projegd-sgribding.exe ${{github.workspace}}/assets/ProjegdSgribding_Win32.exe
 
       - name: Download x86_64 artifact
         uses: actions/download-artifact@v1
@@ -91,15 +91,15 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: true
           prerelease: false
-      - name: Upload x86 artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/assets/ProjegdSgribding_Win32.exe
-          asset_name: ProjegdSgribding-${{ steps.get_tag.outputs.tag }}_x86.exe
-          asset_content_type: application/octet-stream
+#      - name: Upload x86 artifact
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ${{github.workspace}}/assets/ProjegdSgribding_Win32.exe
+#          asset_name: ProjegdSgribding-${{ steps.get_tag.outputs.tag }}_x86.exe
+#          asset_content_type: application/octet-stream
       - name: Upload x86_64 artifact
         uses: actions/upload-release-asset@v1
         env:
