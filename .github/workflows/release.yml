@@ -4,7 +4,7 @@ name: Release a new version
 on: [push, pull_request]
 
 env:
-  CMAKE_VERSION: 3.18.3
+  CMAKE_VERSION: 3.19
   BUILD_TYPE: Release
   CCACHE_VERSION: 4.2.1
 
