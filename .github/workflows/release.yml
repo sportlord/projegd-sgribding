@@ -159,6 +159,9 @@ jobs:
       run: cmake --install build --prefix instdir --strip
 
 
+    - name: Debug
+      run: dir
+
     - name: Pack
       working-directory: instdir
       run: cmake -E tar cfv ../${{ matrix.config.artifact }} --format=7zip .
