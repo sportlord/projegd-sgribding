@@ -1,0 +1,111 @@
+name: Build and release if tagged
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - master
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  win32:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        # - {
+        #     name: "Windows Latest MSVC Win32",
+        #     os: windows-latest,
+        #     cc: "cl",
+        #     cxx: "cl",
+        #     arch: "Win32"
+        #   }
+        - {
+            name: "Windows Latest MSVC x64",
+            os: windows-latest,
+            cc: "cl",
+            cxx: "cl",
+            arch: "x64"
+          }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build -G "Visual Studio 16 2019" -A ${{ matrix.config.arch }} --config ${{env.BUILD_TYPE}}
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ProjegdSgribding_${{ matrix.config.arch }}.exe
+          path: ${{github.workspace}}/build/Release/projegd-sgribding.exe
+
+  publish:
+    name: Publish release
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    needs:
+      - win32
+    steps:
+      - name: Get git tag
+        id: get_tag
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Download x86 artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ProjegdSgribding_Win32.exe
+          path: ${{github.workspace}}/assets
+      - name: Fix filename
+        run: mv ${{github.workspace}}/assets/projegd-sgribding.exe ${{github.workspace}}/assets/ProjegdSgribding_Win32.exe
+
+      - name: Download x86_64 artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ProjegdSgribding_x64.exe
+          path: ${{github.workspace}}/assets
+      - name: Fix filename
+        run: mv ${{github.workspace}}/assets/projegd-sgribding.exe ${{github.workspace}}/assets/ProjegdSgribding_x64.exe
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Upload x86 artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/assets/ProjegdSgribding_Win32.exe
+          asset_name: ProjegdSgribding-${{ steps.get_tag.outputs.tag }}_x86.exe
+          asset_content_type: application/octet-stream
+      - name: Upload x86_64 artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/assets/ProjegdSgribding_x64.exe
+          asset_name: ProjegdSgribding-${{ steps.get_tag.outputs.tag }}_x86_64.exe
+          asset_content_type: application/octet-stream

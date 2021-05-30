@@ -43,7 +43,7 @@ Wenn des stadded könnd ihr die Zeiden für die Understüdsung ändern. Des wird
 
 ### Hilfe
 
-Ich gann aus beruflichen Gründen (selbständiger Schichtarbeider) leider keinen Drachis helfne wenn ihr das net fersteht. Kein Kommen her!
+Ich gann aus Wusel und Wergel Gründen (selbständiger Schichtarbeider) leider keinen Drachis helfne wenn ihr das net fersteht. Kein Kommen her!
 
 ## Ausblig
 
@@ -76,5 +76,5 @@ Ich möchde hier noch gurtz Ehrenhaider des Games verlingen die mich steds mit n
 - [Rendern Hochladen](https://www.youtube.com/channel/UCeJvrXLRua3_OFGNO92Mi_g) für die Zeitersparnis durch die Zusammnefasungne
 - [KLH](https://www.youtube.com/channel/UC8wFYUe4TjnFvPYSnP6F-aQ) der uns den Bligg für die Künst öffnet
 - [Diener Danken](https://www.youtube.com/channel/UCZqySpFzzXssrVutpSo6srA) dessen Hörspiele etzala mal auf Kasettne erhältlich sein solltne
-- [HIZ](https://www.youtube.com/channel/UC5_485onrv3X1HkMLyqtxpQ) ohne die mir Autofahren langweilig vorkommt
+- [HIZ](https://www.youtube.com/channel/UC5_485onrv3X1HkMLyqtxpQ) deren Lieder etzala mein Audoradio auswendig kann
 - [ASB Express](https://www.asbexpress.com/) und [Altschauerberganzeiger](https://altschauerberganzeiger.com/) für die Lesestunden beim Kackduschne
