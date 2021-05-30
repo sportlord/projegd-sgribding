@@ -29,7 +29,6 @@ bool is_game_active(config c) {
     HWND window = GetForegroundWindow();
     char title[255];
     GetWindowTextA(window, title, 254);
-    cout << title << endl;
     return c.ic.title.compare(title) == 0;
 }
 

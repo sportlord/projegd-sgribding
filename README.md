@@ -25,7 +25,7 @@ Das Brogram ist so schtabil wie mein Bulldoghallendach. Der Kot funktionobelt sc
 
 ### An die Endwigler
 
-Etzala is des so: Ihr braucht eigentlich nur `cmake` um das zu gombilieren. Aber evenduell bekomme ich auch die sogenanten GitHub Actions ans fliegen (_ob das auch Drachne sind?_). Da ich mit meinem Fater mit fihr im Wald schon Brogrammieren gelernt hab, emfele ich euch `CLion` und hab euch als gleines Gescheng auch die Brojegtdateine mit dazugebacked.
+Etzala is des so: Ihr braucht eigentlich nur `cmake` um das zu gombilieren. Aber evenduell bekomme ich auch die sogenanten GitHub Actions ans fliegen (_ob das auch Drachne sind?_). Da ich mit meinem Fater mit fihr im Wald schon Brogrammieren gelernt hab, emfele ich euch `CLion` und hab euch als gleines Gescheng auch die Brojegtdateine mit dazugebacked. Für die Gomunidi.
 
 ## Fungdsionalidäd
 
@@ -51,8 +51,30 @@ In Zugunft möchte ich hier noch mehr Gondend bereidstellen. Sobald ich meinen M
 
 # Understüdtsung gegen den Haid
 
-Wenn ich mich understüdsen wolld könt ihr euch meine Mertsch gaufen oder mal auf meiner Wuntschlisde vorbeischaune.
+Wenn ich mich understüdsen wolld könt ihr euch meine Mertsch gaufen oder mal auf meiner Wuntschlisde vorbeischaune. Ansonsden schreibe ich auch a weng an Büchern fals ihr liber lesd.
 
-<img src=".github/images/fenshirt.png?raw=true" width=200 align=right>
+<img src=".github/images/fenshirt.png?raw=true" height=200 align=right>
 
-<img src=".github/images/wuntschlisde.png?raw=true" width=300 align=left>
+<img src=".github/images/wuntschlisde.png?raw=true" height=200 align=left>
+
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+&nbsp;<br/>
+
+## Grüse gehen raus
+
+Ich möchde hier noch gurtz Ehrenhaider des Games verlingen die mich steds mit neuem Mett versorgne. Ich hab bestimd den einen oder die andere vergessne, etzala trodzdem Dange für den Gondend.
+
+- [Ranger](https://www.youtube.com/channel/UCufXBukkxI44wIqwPmXNAhw) für büngdlichen Restreams
+- SpiegelLord (_Agduelle Nummer einfügne_) für jeden neuen VLog den ich guggne kann ohne Klicks für den Oger zu spendnen
+- [Rendern Hochladen](https://www.youtube.com/channel/UCeJvrXLRua3_OFGNO92Mi_g) für die Zeitersparnis durch die Zusammnefasungne
+- [KLH](https://www.youtube.com/channel/UC8wFYUe4TjnFvPYSnP6F-aQ) der uns den Bligg für die Künst öffnet
+- [Diener Danken](https://www.youtube.com/channel/UCZqySpFzzXssrVutpSo6srA) dessen Hörspiele etzala mal auf Kasettne erhältlich sein solltne
+- [HIZ](https://www.youtube.com/channel/UC5_485onrv3X1HkMLyqtxpQ) ohne die mir Autofahren langweilig vorkommt
+- [ASB Express](https://www.asbexpress.com/) und [Altschauerberganzeiger](https://altschauerberganzeiger.com/) für die Lesestunden beim Kackduschne
