@@ -15,11 +15,11 @@
 
 using namespace std;
 
+// Probability, keys, release key
+typedef tuple<float, vector<unsigned char>, bool> input_group;
+
 struct input_key_config {
-    // Virtual Key Codes
-    vector<uint8_t> basic;
-    vector<uint8_t> special;
-    float chance_special = .1;
+    vector<input_group> keys;
     bool wScan = true;
 };
 
@@ -59,20 +59,43 @@ struct config {
     output_config oc;
 };
 
+bool valdiate_config(config *c) {
+    bool success = true;
+    float p = 0;
+    for (const auto& group: c->ic.kc.keys) {
+        p += get<0>(group);
+    }
+    if (p != 1.) {
+        cerr << "Etzlaa is des so, die Wascheinlichkeitneee mus imer einz sein!" << endl;
+        success = false;
+    }
+
+    return success;
+}
+
+string key_name(uint8_t key) {
+    stringstream ss;
+    if (('A' <= key && key <= 'Z') || ('0' <= key && key <= '9')) {
+        ss << key;
+    } else if (VK_F1 <= key && key <= VK_F24) {
+        ss << "F" << key - VK_F1 + 1;
+    } else {
+        ss << hex << key + 0;
+    }
+    return ss.str();
+}
+
 void print_key_config(input_key_config kc) {
     PRINT_TITLE("Keyboard:");
-    cout << "Basic - ";
-    for (uint8_t vcs : kc.basic) {
-        cout << vcs << " ";
-    }
-    cout << endl;
-    cout << "Special - ";
-    for (uint8_t vcs : kc.special) {
-        if ('A' <= vcs && vcs <= 'Z')
-            cout << vcs;
-        else
-            cout << hex << vcs;
-        cout << " ";
+    int i = 1;
+    for (const auto& group: kc.keys) {
+        float p = get<0>(group);
+        auto keys = get<1>(group);
+        cout << "Grubbe " << i++ << " (" << round(p * 100) << "%):";
+        for (auto key: keys) {
+            cout << " " << key_name(key);
+        }
+        cout << endl;
     }
     cout << endl;
 }
@@ -114,6 +137,10 @@ void print_config(config *c) {
 void log(config *c, string text) {
     if (c->oc.verbose) {
         cout << text;
+    } else {
+#ifdef DEBUG
+        cout << text;
+#endif
     }
     if (c->oc.log_file->is_open()) {
         *c->oc.log_file << text;
@@ -146,23 +173,25 @@ bool send_input(config *c) {
         // send key
         inputs[0].type = INPUT_KEYBOARD;
         inputs[0].ki.dwFlags = 0;
-        uint8_t key;
+        uint8_t key = -1;
         uint8_t idx;
-        if (randf() < c->ic.kc.chance_special) {
-            idx = (uint8_t) randl(0, (int) c->ic.kc.special.size());
-            key = c->ic.kc.special[idx];
-        } else {
-            idx = (uint8_t) randl(0, (int) c->ic.kc.basic.size());
-            key = c->ic.kc.basic[idx];
+        float p = 0;
+        float x = randf();
+        int i = 0;
+        for (const auto& group: c->ic.kc.keys) {
+            p += get<0>(group);
+            if (p > x) {
+                need_second = get<2>(group);
+                idx = (uint8_t) randl(0, (int) get<1>(group).size());
+                key = get<1>(group)[idx];
+                break;
+            }
+        }
+        if (key == (uint8_t) -1) {
+            key = get<1>(c->ic.kc.keys[0])[0];
         }
 
-        ss << "Schigge dasde ";
-        if ('A' <= key && key <= 'Z') {
-             ss << key;
-        } else {
-            ss << hex << key + 0;
-        }
-        ss << endl;
+        ss << "Schigge dasde " << key_name(key) << endl;
         log(c, &ss);
 
         inputs[0].ki.wVk = key;
@@ -224,7 +253,7 @@ bool send_input(config *c) {
             }
         }
     }
-
+#ifndef SIMULATE
     if (!c->ic.simulate) {
         INPUT send[1] = {};
         send[0] = inputs[0];
@@ -235,15 +264,21 @@ bool send_input(config *c) {
             if (SendInput(1, send, sizeof(INPUT)) != 1) return false;
         }
     }
+#endif
 
     return true;
 }
 
-void delay_random(config *c) {
+auto delay_random(config *c) {
     uint16_t delta = abs(c->tc.delay[1] - c->tc.delay[0]);
     auto delay = min(c->tc.delay[0], c->tc.delay[1]) * 1000 + (uint16_t) round((double) randf() * (double) delta * 1000.);
+    return delay;
+}
+
+int delay_random_cycles(config *c) {
+    auto delay = delay_random(c);
     stringstream ss;
     ss << "Wadde " << dec << delay + 0 << "ms" << endl;
     log(c, &ss);
-    Sleep(delay);
+    return (int) delay / 100;
 }

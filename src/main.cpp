@@ -1,13 +1,17 @@
 #include <iostream>
-#include <fstream>
 #include <Windows.h>
 #include <synchapi.h>
 #include <string>
-#include <sstream>
 
-#define DEBUG 1
+#include "src/version.h" // Will be created by cmake
+
 #include "../include/argparse/argparse.h"
 #include "./games/lol.h"
+
+#define STR1(x)  #x
+#define STR(x)  STR1(x)
+
+#define MINDELAY 5
 
 using namespace std;
 
@@ -39,9 +43,9 @@ int main(int argc, const char* argv[]) {
 //        printf("CreateSemaphore error: %lu\n", GetLastError());
 //        return 1;
 //    }
-    argparse::ArgumentParser parser("Projegd Sgribding", "Varieirde wariande eines guden Brograms");
+    argparse::ArgumentParser parser("Projegd Sgribding " VERSION_STR, "Varieirde wariande eines guden Brograms");
     parser.add_argument("game", "Des Spil des ihr etzala spild", true).count(1).position(0);
-    parser.add_argument("-l", "--delay-lower", "Midesdens so lange wadden bis was basirt (min: 5, max: 120)", false).count(1);
+    parser.add_argument("-l", "--delay-lower", "Midesdens so lange wadden bis was basirt (min: " STR(MINDELAY) ", max: 120)", false).count(1);
     parser.add_argument("-u", "--delay-upper", "Magsimal so lange wadden bis was basirt (max: 300)",false).count(1);
     parser.add_argument("-f", "--file", "Schreib die Ausgabne in ein Buch",false).count(1);
     parser.add_argument("-v", "--verbose", "Erweiderde ausgabne",false);
@@ -69,7 +73,7 @@ int main(int argc, const char* argv[]) {
 
     time_config tc = { { 15, 45 } };
     if (parser.exists("delay-lower")) {
-        tc.delay[0] = min(120, max(5, parser.get<uint16_t>("delay-lower")));
+        tc.delay[0] = min(120, max(MINDELAY, parser.get<uint16_t>("delay-lower")));
     }
     if (parser.exists("delay-lower")) {
         tc.delay[1] = min(300, max(tc.delay[0], parser.get<uint16_t>("delay-upper")));
@@ -84,6 +88,10 @@ int main(int argc, const char* argv[]) {
 
     config c = {ic, tc, get_screen_config(), { parser.exists("verbose"), &log_file } };
 
+    if (!valdiate_config(&c)) {
+        return -3;
+    }
+
     char show_conf[2]; // Need 2 bytes as cin stores newlines
     cout << "Wilsd du noch die Gonfiguration sehne? [Ny] ";
     cin.get(show_conf, 2);
@@ -94,21 +102,33 @@ int main(int argc, const char* argv[]) {
             break;
     }
 
+    cout << "Leds Blähhh alder" << endl;
+
+    int sleep_cycles = 0;
+
     for (;;) {
+        if (sleep_cycles > 0) {
+            Sleep(100);
+        }
         if (paused) {
-            Sleep(500);
             continue;
         }
+#ifndef SIMULATE
         if (!is_game_active(&c)) {
             log(&c, "Net im Spil. Ich wadde...");
             while (!is_game_active(&c)) {
-                Sleep(500);
+                Sleep(100);
             }
-            log(&c, "Weida\n");
+            log(&c, "un weida\n");
+            continue;
         }
+#endif
+        if (sleep_cycles-- > 0) {
+            continue;
+        }
+        sleep_cycles = delay_random_cycles(&c);
         if (!send_input(&c))
             break;
-        delay_random(&c);
     }
 
     if (log_file.is_open()) {
