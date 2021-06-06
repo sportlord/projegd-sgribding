@@ -51,7 +51,7 @@ jobs:
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D VERSION=${{ steps.get_tag.outputs.tag }}
 
       - name: Configure CMake
-        if: !contains(github.ref, 'tags/v')
+        if: "!contains(github.ref, 'tags/v')"
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
