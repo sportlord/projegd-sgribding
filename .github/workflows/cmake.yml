@@ -42,13 +42,11 @@ jobs:
         with:
           submodules: true
       - name: Get git tag
-        if: contains(github.ref, 'tags/v')
-        id: get_tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-
+        uses: olegtarasov/get-tag@v2.1
+        id: git_tag
       - name: Configure CMake with version
         if: contains(github.ref, 'tags/v')
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D VERSION=${{ steps.get_tag.outputs.tag }}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -D VERSION=${{ steps.git_tag.outputs.tag }}
 
       - name: Configure CMake
         if: "!contains(github.ref, 'tags/v')"
