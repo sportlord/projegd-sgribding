@@ -1,3 +1,5 @@
+[![Build](https://github.com/sportlord/projegd-sgribding/actions/workflows/cmake.yml/badge.svg?branch=master)](https://github.com/sportlord/projegd-sgribding/actions/workflows/cmake.yml)
+
 Projegd Sgribding
 =================
 
