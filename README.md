@@ -3,7 +3,7 @@ Projegd Sgribding
 
 Sportlord, Sportlord, meddl loide. Ich bins etzala der Sportlord.
 
-Damid ich entlich auch ma in Leatsch of Letschend gewinen kan, hab ich etzala ein eigenes Brogram zusamengemeddelt.
+Damid ich entlich auch ma in Leatsch of Letschend gewinen kan, hab ich etzala ein eigenes Brogram zusamengemeddelt. Damit kann Etzio endlich mal so richtig absteuern.
 
 > Immer dran dengen, Meddl is Griech alla.
 

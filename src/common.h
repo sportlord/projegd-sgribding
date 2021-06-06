@@ -9,6 +9,7 @@
 #include <winuser.h>
 
 #include "random.h"
+#include "types.h"
 
 #define PRINT_SEP "==================="
 #define PRINT_TITLE(X) cout << PRINT_SEP << endl << X << endl;
@@ -16,7 +17,7 @@
 using namespace std;
 
 // Probability, keys, release key
-typedef tuple<float, vector<unsigned char>, bool> input_group;
+typedef tuple<float, vector<key_t>, bool> input_group;
 
 struct input_key_config {
     vector<input_group> keys;
@@ -48,7 +49,7 @@ struct screen_config {
 };
 
 struct output_config {
-    bool verbose = false;
+    bool quiet = false;
     ofstream *log_file;
 };
 
@@ -134,18 +135,23 @@ void print_config(config *c) {
     print_screen_config(c->sc);
 }
 
-void log(config *c, string text) {
-    if (c->oc.verbose) {
+void log(config *c, string text, bool always_debug) {
+    if (!c->oc.quiet) {
         cout << text;
-    } else {
-#ifdef DEBUG
-        cout << text;
+    } else  {
+#ifndef DEBUG
+        if (always_debug)
 #endif
+        cout << text;
     }
     if (c->oc.log_file->is_open()) {
         *c->oc.log_file << text;
         c->oc.log_file->flush();
     }
+}
+
+void log(config *c, string text) {
+    log(c, text, false);
 }
 
 void log(config *c, stringstream *text) {
@@ -173,8 +179,8 @@ bool send_input(config *c) {
         // send key
         inputs[0].type = INPUT_KEYBOARD;
         inputs[0].ki.dwFlags = 0;
-        uint8_t key = -1;
-        uint8_t idx;
+        key_t key = -1;
+        int idx;
         float p = 0;
         float x = randf();
         int i = 0;
@@ -182,12 +188,12 @@ bool send_input(config *c) {
             p += get<0>(group);
             if (p > x) {
                 need_second = get<2>(group);
-                idx = (uint8_t) randl(0, (int) get<1>(group).size());
+                idx = (int) randl(0, (int) get<1>(group).size());
                 key = get<1>(group)[idx];
                 break;
             }
         }
-        if (key == (uint8_t) -1) {
+        if (key == (key_t) -1) {
             key = get<1>(c->ic.kc.keys[0])[0];
         }
 
@@ -280,5 +286,5 @@ int delay_random_cycles(config *c) {
     stringstream ss;
     ss << "Wadde " << dec << delay + 0 << "ms" << endl;
     log(c, &ss);
-    return (int) delay / 100;
+    return (int) delay / SLEEP_CYCLE;
 }

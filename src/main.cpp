@@ -4,6 +4,7 @@
 #include <string>
 
 #include "src/version.h" // Will be created by cmake
+#include "types.h"
 
 #include "../include/argparse/argparse.h"
 #include "./games/lol.h"
@@ -11,7 +12,7 @@
 #define STR1(x)  #x
 #define STR(x)  STR1(x)
 
-#define MINDELAY 5
+#define MINDELAY 3
 
 using namespace std;
 
@@ -36,7 +37,22 @@ bool is_game_active(config *c) {
     return c->ic.title == title;
 }
 
+typedef input_config (*config_creator)(VOID);
+
+struct game_info {
+    string name;
+    config_creator creator;
+};
+
+
+map<string, game_info> GAMES = {
+        {"lol", { "League of Legends", &create_config_lol } },
+};
+
 int main(int argc, const char* argv[]) {
+    SetConsoleOutputCP( CP_UTF8 ); // Meddlfrängisch-Understüdsung
+
+
 //    ghSemaphore = CreateSemaphore(nullptr, 1, 1, nullptr);
 //
 //    if (ghSemaphore == nullptr) {
@@ -44,13 +60,15 @@ int main(int argc, const char* argv[]) {
 //        return 1;
 //    }
     argparse::ArgumentParser parser("Projegd Sgribding " VERSION_STR, "Varieirde wariande eines guden Brograms");
-    parser.add_argument("game", "Des Spil des ihr etzala spild", true).count(1).position(0);
+    parser.add_argument("-g", "--game", "Des Spil des ihr etzala spild", false).count(1);
     parser.add_argument("-l", "--delay-lower", "Midesdens so lange wadden bis was basirt (min: " STR(MINDELAY) ", max: 120)", false).count(1);
     parser.add_argument("-u", "--delay-upper", "Magsimal so lange wadden bis was basirt (max: 300)",false).count(1);
     parser.add_argument("-f", "--file", "Schreib die Ausgabne in ein Buch",false).count(1);
-    parser.add_argument("-v", "--verbose", "Erweiderde ausgabne",false);
+    parser.add_argument("-q", "--quiet", "Gib nich so viel ausne",false);
+    parser.add_argument("-v", "--verbose", "Erweiderde Ausgabne",false);
     parser.add_argument("-s", "--simulate", "Agdionen nur sumulirn",false);
     parser.enable_help();
+
     auto err = parser.parse(argc, argv);
     if (err) {
         cout << err << endl;
@@ -62,14 +80,31 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
-    string game = parser.get<string>("game");
-    input_config ic;
-    if (game == "lol") {
-        ic = create_config_lol();
+    string game;
+    if (parser.exists("game")) {
+        game = parser.get<string>("game");
     } else {
+        cout << "Wähl etzala n Spil aus:" << endl;
+        int i = 0;
+        vector<string> keys;
+        for (auto game: GAMES) {
+            keys.insert(keys.begin(), game.first);
+            cout << ++i << " - " << game.second.name << endl;
+        }
+        cout << "Tibbe ne Nummer: ";
+        int sel;
+        do {
+            cin >> sel;
+        } while (sel < 1 || sel > i);
+        game = keys[sel - 1];
+    }
+    if (GAMES.find(game) == GAMES.end()) {
         cout << "Des Schpil kenn ich net" << endl;
         return -2;
     }
+
+    input_config ic;
+    ic = GAMES[game].creator();
 
     time_config tc = { { 15, 45 } };
     if (parser.exists("delay-lower")) {
@@ -86,20 +121,14 @@ int main(int argc, const char* argv[]) {
 
     ic.simulate = parser.exists("simulate");
 
-    config c = {ic, tc, get_screen_config(), { parser.exists("verbose"), &log_file } };
+    config c = {ic, tc, get_screen_config(), { parser.exists("quiet"), &log_file } };
 
     if (!valdiate_config(&c)) {
         return -3;
     }
 
-    char show_conf[2]; // Need 2 bytes as cin stores newlines
-    cout << "Wilsd du noch die Gonfiguration sehne? [Ny] ";
-    cin.get(show_conf, 2);
-    switch (show_conf[0]) {
-        case 'y':
-        case 'Y':
-            print_config(&c);
-            break;
+    if (parser.exists("verbose")) {
+        print_config(&c);
     }
 
     cout << "Leds Blähhh alder" << endl;
@@ -108,27 +137,27 @@ int main(int argc, const char* argv[]) {
 
     for (;;) {
         if (sleep_cycles > 0) {
-            Sleep(100);
+            Sleep(SLEEP_CYCLE);
         }
         if (paused) {
             continue;
         }
 #ifndef SIMULATE
         if (!is_game_active(&c)) {
-            log(&c, "Net im Spil. Ich wadde...");
+            log(&c, "Net im Spil. Ich wadde...", true);
             while (!is_game_active(&c)) {
-                Sleep(100);
+                Sleep(SLEEP_CYCLE);
             }
-            log(&c, "un weida\n");
+            log(&c, "un weida\n", true);
             continue;
         }
 #endif
         if (sleep_cycles-- > 0) {
             continue;
         }
-        sleep_cycles = delay_random_cycles(&c);
         if (!send_input(&c))
             break;
+        sleep_cycles = delay_random_cycles(&c);
     }
 
     if (log_file.is_open()) {
